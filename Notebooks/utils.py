@@ -53,6 +53,45 @@ def extract_trip_multifunc(paths, funcs:list, names:list, df=True):
         return pd.DataFrame(results)
     return results
 
+def group_by_engine_type(static_df, timeseries_df, ignore_diesel=True, ignore_turbocharged=True):
+    ICEs = static_df[static_df['Vehicle Type'] == 'ICE']
+    HEVs = static_df[static_df['Vehicle Type'] == 'HEV']
+    PHEVs = static_df[static_df['Vehicle Type'] == 'PHEV']
+    BEVs = static_df[static_df['Vehicle Type'] == 'BEV']
+
+    if ignore_diesel:
+        ICEs = ICEs[~ICEs['Engine Configuration & Displacement'].str.contains('DSL')]
+    if ignore_turbocharged:
+        ICEs = ICEs[~ICEs['Engine Configuration & Displacement'].str.contains('T/C')]
+
+    ICE_timeseries = pd.merge(ICEs, timeseries_df, on ='VehId')
+    HEV_timeseries = pd.merge(HEVs, timeseries_df, on='VehId')
+    PHEV_timeseries = pd.merge(PHEVs, timeseries_df, on='VehId')
+    BEV_timeseries = pd.merge(BEVs, timeseries_df, on='VehId')
+
+    return ICE_timeseries, HEV_timeseries, PHEV_timeseries, BEV_timeseries
+
+def group_into_trips(timeseries):
+    '''
+    Given a Pandas df representing timeseries data, create an array of Pandas df for each unique trip.
+    
+    Input: a Pandas DataFrame
+    Output: a list of Pandas DataFrame objects
+
+    Note: Different trip IDs sometimes corresponded to more than one VehId, implying that they aren't unique.
+    For this reason, we split on both the 'Trip' column AND the 'VehId' column
+    '''
+    trips = []
+    for trip_id in timeseries['Trip'].unique():
+        trip_timeseries = timeseries[timeseries['Trip'] == trip_id]
+
+        for veh_id in trip_timeseries['VehId'].unique():
+            trip_timeseries_split_by_vehicle = trip_timeseries[trip_timeseries['VehId'] == veh_id]
+            trips.append(trip_timeseries_split_by_vehicle)
+
+    return trips
+
+
 class NaChecker():
     def __init__(self, colname):
         self.colname = colname
