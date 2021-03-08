@@ -7,10 +7,7 @@ import os
 from pandas.core.reshape.concat import concat
 from utils import group_into_trips, group_by_engine_type
 
-ICE_trips = group_into_trips(ICEs)
-HEV_trips = group_into_trips(HEVs)
-PHEV_trips = group_into_trips(PHEVs)
-BEV_trips = group_into_trips(BEVs)
+
 
 raw_data_path = '/nfs/turbo/midas-applied-ds/Data/Raw/VED/'
 processed_data_path = '/nfs/turbo/midas-applied-ds/Data/Processed'
