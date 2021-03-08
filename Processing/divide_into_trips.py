@@ -3,11 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import glob
 import os
+
+from pandas.core.reshape.concat import concat
 from utils import group_into_trips, group_by_engine_type
 
-static = pd.read_csv('../VED_Static_Data_ICE_HEV.csv')
-timeseries = pd.read_csv('../sample_data.csv')
-ICEs, HEVs, PHEVs, BEVs = group_by_engine_type(static, timeseries)
+pd.concat([static])
 ICE_trips = group_into_trips(ICEs)
 HEV_trips = group_into_trips(HEVs)
 PHEV_trips = group_into_trips(PHEVs)
@@ -15,6 +15,9 @@ BEV_trips = group_into_trips(BEVs)
 
 raw_data_path = '/nfs/turbo/midas-applied-ds/Data/Raw/VED/'
 processed_data_path = '/nfs/turbo/midas-applied-ds/Data/Processed'
+ICE_HEV = pd.read_csv(os.path.join(raw_data_path, 'VED_Static_Data_ICE_HEV.csv'))
+PHEV_BEV = pd.read_csv(os.path.join(raw_data_path, 'VED_Static_Data_PHEV_EV.csv'))
+static = pd.concat([ICE_HEV, PHEV_BEV])
 
 paths = glob.glob(os.path.join(raw_data_path, '*.csv'))
 df = pd.concat((pd.read_csv(f) for f in paths))
