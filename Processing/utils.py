@@ -72,6 +72,15 @@ def distance_functor():
         return dist
     return wrapped
 
+def get_distances(trip):
+    '''
+    Given a trip in a Pandas DataFrame, return a Pandas Series that contains distance traveled for each datapoint in the trip.
+    Distance is in km.
+    '''
+    trip.sort_values(by=['Timestamp(ms)'])
+    f = distance_functor()
+    return trip.apply(lambda df : f(df['Latitude[deg]'], df['Longitude[deg]']), axis=1)
+
 def accel_functor():
     '''
     Return a function object that, when called with a vehicle's velocity (in km/h) 
@@ -133,6 +142,16 @@ def aggressivity(trip):
     '''
     power_factors = get_power_factors(trip)
     return np.sqrt(np.sum(power_factors ** 2) / len(power_factors))
+
+# don't we need to consider the mass of the vehicle?
+def get_pkes(trip):
+    trip.sort_values(by=['Timestamp(ms)']) # this might be redundant (better safe than sorry)
+    return trip.apply(lambda df : 1/2 * df['Vehicle Speed[km/h]'] ** 2)
+
+def aggressiveness(trip):
+    pkes = get_pkes(trip)
+    distances = get_distances(trip)
+    return np.sum(pkes) / np.sum(distances)
 
 def fuel_algo(x, displacement):
     # first do everything for MAF non NA
