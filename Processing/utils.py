@@ -146,7 +146,7 @@ def aggressivity(trip):
 # don't we need to consider the mass of the vehicle?
 def get_pkes(trip):
     trip.sort_values(by=['Timestamp(ms)']) # this might be redundant (better safe than sorry)
-    return trip.apply(lambda df : 1/2 * df['Vehicle Speed[km/h]'] ** 2)
+    return trip.apply(lambda df : 1/2 * df['Vehicle Speed[km/h]'] ** 2, axis=1)
 
 def aggressiveness(trip):
     pkes = get_pkes(trip)
