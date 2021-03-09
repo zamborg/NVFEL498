@@ -152,12 +152,6 @@ def fuel_algo(x, displacement):
     absLoad = x[~maf_screen]['Absolute Load[%]']
     RPM = x[~maf_screen]['Engine RPM[RPM]']
     fuel_flow = x[~maf_screen]['MAF[g/sec]']
-    if len(displacement) == 0:
-        return pd.DataFrame(np.zeros(shape=(len(x))))
-    displacement = displacement.iloc[0]
-    displacement = re.findall(r"\d\.\d",displacement)
-    if len(displacement) != 1:
-        raise Exception('Something Broke in displacement string search')
     displacement = float(displacement[0].strip("L"))
     maf = 1.84 * displacement * absLoad/100 * RPM/2/60
     out[~maf_screen] = list((maf*sec_hour)/(air_to_fuel*fuel_density)) #update out where MAF is NAN
