@@ -153,7 +153,7 @@ def aggressiveness(trip):
     distances = get_distances(trip)
     return np.sum(pkes) / np.sum(distances)
 
-def fuel_algo(x):
+def fuel_algo(x, nonEVs):
         # first do everything for MAF non NA
         # then for all MAF NA values, do absLoad calculation
         # Because NA denom or numer => NAN => NA in both => NAN
