@@ -16,30 +16,48 @@ PHEV_BEV = pd.read_csv('../VED_Static_Data_PHEV_EV.csv')
 static = pd.concat([ICE_HEV, PHEV_BEV])
 
 paths = glob.glob(os.path.join(raw_data_path, '*.csv'))
-df = pd.concat((pd.read_csv(f) for f in paths))
 
-ICEs, HEVs, PHEVs, BEVs = group_by_engine_type(static, df)
-ICE_trips = group_into_trips(ICEs)
-HEV_trips = group_into_trips(HEVs)
-PHEV_trips = group_into_trips(PHEVs)
-BEV_trips = group_into_trips(BEVs)
+entries = set()
+w = 0
+x = 0
+y = 0
+z = 0
 
-for i, trip in enumerate(ICE_trips):
-    path = os.path.join(processed_data_path, 'ICE_trips', f'ICE_trip{i}.csv')
-    f = open(path, 'w')
-    trip.to_csv(f)
+def write_trip(trip, prefix, i):
+  trip_id = trip['Trip'].unique()[0]
+  veh_id = trip['VehId'].unique()[0]
+  entry = (trip_id, veh_id)
+  if entry in entries:
+    print('error: duplicate trips across files')
+    assert(False)
+  path = os.path.join(processed_data_path, f'{prefix}_trips', f'{prefix}_trip{i}.csv')
+  f = open(path, 'w')
+  trip.to_csv(f)
 
-for i, trip in enumerate(HEV_trips):
-    path = os.path.join(processed_data_path, 'HEV_trips', f'HEV_trip{i}.csv')
-    f = open(path, 'w')
-    trip.to_csv(f)
+def write_trips(path, w, x, y, z):
+  df = pd.read_csv(path)
+  ICEs, HEVs, PHEVs, BEVs = group_by_engine_type(static, df)
+  ICE_trips = group_into_trips(ICEs)
+  HEV_trips = group_into_trips(HEVs)
+  PHEV_trips = group_into_trips(PHEVs)
+  BEV_trips = group_into_trips(BEVs)
+  for trip in ICE_trips:
+    write_trip(trip, 'ICE', w)
+    w += 1
 
-for i, trip in enumerate(PHEV_trips):
-    path = os.path.join(processed_data_path, 'PHEV_trips', f'PHEV_trip{i}.csv')
-    f = open(path, 'w')
-    trip.to_csv(f)
+  for trip in HEV_trips:
+    write_trip(trip, 'HEV', x)
+    x += 1
 
-for i, trip in enumerate(BEV_trips):
-    path = os.path.join(processed_data_path, 'BEV_trips', f'BEV_trip{i}.csv')
-    f = open(path, 'w')
-    trip.to_csv(f)
+  for trip in PHEV_trips:
+    write_trip(trip, 'PHEV', y)
+    y += 1
+
+  for trip in BEV_trips:
+    write_trip(trip, 'BEV', z)
+    z += 1
+  return w, x, y, z
+
+for i, path in enumerate(paths):
+  print(f'processing path {i} of {len(paths)}')
+  w, x, y, z = write_trips(path, w, x, y, z)
