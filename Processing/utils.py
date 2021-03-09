@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import re
 
 def group_by_engine_type(static_df, timeseries_df, ignore_diesel=True, ignore_turbocharged=True):
     ICEs = static_df[static_df['Vehicle Type'] == 'ICE']
@@ -133,3 +134,34 @@ def aggressivity(trip):
     power_factors = get_power_factors(trip)
     return np.sqrt(np.sum(power_factors ** 2) / len(power_factors))
 
+def fuel_algo(x, displacement):
+    # first do everything for MAF non NA
+    # then for all MAF NA values, do absLoad calculation
+    # Because NA denom or numer => NAN => NA in both => NAN
+    sec_hour = 3600
+    air_to_fuel = 14.7
+    fuel_density = 820
+    
+    out = pd.DataFrame(np.zeros(shape=(len(x))))
+    
+    maf_screen = np.array(x['MAF[g/sec]'].isna()).reshape(-1,1)
+    maf = x[maf_screen]['MAF[g/sec]']
+    fuel_flow = (maf*sec_hour)/(air_to_fuel*fuel_density)
+    out[maf_screen] = list(fuel_flow/x[maf_screen]['Vehicle Speed[km/h]'])
+    
+    absLoad = x[~maf_screen]['Absolute Load[%]']
+    RPM = x[~maf_screen]['Engine RPM[RPM]']
+    fuel_flow = x[~maf_screen]['MAF[g/sec]']
+    if len(displacement) == 0:
+        return pd.DataFrame(np.zeros(shape=(len(x))))
+    displacement = displacement.iloc[0]
+    displacement = re.findall(r"\d\.\d",displacement)
+    if len(displacement) != 1:
+        raise Exception('Something Broke in displacement string search')
+    displacement = float(displacement[0].strip("L"))
+    maf = 1.84 * displacement * absLoad/100 * RPM/2/60
+    out[~maf_screen] = list((maf*sec_hour)/(air_to_fuel*fuel_density)) #update out where MAF is NAN
+    
+    out.replace(float('inf'), 0, inplace=True)
+    
+    return pd.Series(out.iloc[:,0])
