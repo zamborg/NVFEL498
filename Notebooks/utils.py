@@ -1,57 +1,5 @@
-import os
-import glob
-from tqdm import tqdm
 import pandas as pd
-
-HOME_DIR = '/home/aysola'
-RAW_DATA_PATH = os.path.join(HOME_DIR, 'midas-applied-ds/Data/Raw/VED/')
-RAW_PATHS = sorted(glob.glob(os.path.join(RAW_DATA_PATH, '*.csv')))
-
-def extract_trip_info(paths, func, df=True, name='values'):
-    """
-    Paths is a list of paths that point to VED csv files
-    func is a functor that grabs pertinent info from the slice of the csv. EG:
-        func = lambda x: x['Vehicle Speed[km/h]'].sum()/len(x)
-        
-    func needs to take a dataframe as an input, the output of func is returned for each slice of the dataset in a dictionary with `Trip` as the keys and func output as the values.
-    
-    if df -> output is returned as a dataframe instead of a dict.
-    name: name for column output of func in dataframe
-    """
-    
-    return_dict = {}
-    
-    for path in tqdm(paths):
-        data = pd.read_csv(path)
-        for trip in data['Trip'].value_counts().index:
-            return_dict[trip] = func(data[data['Trip']==trip])
-                
-    if df is True:
-        return_dict = pd.DataFrame({'Trip':list(return_dict.keys()), name:list(return_dict.values())})
-        
-    return return_dict
-    
-    
-def extract_trip_multifunc(paths, funcs:list, names:list, df=True):
-    """
-    This is the exact same function as extract_trip_info but with several functions concatted 
-    
-    names must be equally as long as funcs
-    returns either dict or dataframe
-    """
-    
-    results = {name:[] for name in names}
-    results['Trip'] = []
-    
-    for path in tqdm(paths):
-        data = pd.read_csv(path)
-        for trip in data['Trip'].value_counts().index:
-            results['Trip'].append(trip)
-            for func, name in zip(funcs, names):
-                results[name].append(func(data[data['Trip']==trip]))
-    if df:
-        return pd.DataFrame(results)
-    return results
+import numpy as np
 
 def group_by_engine_type(static_df, timeseries_df, ignore_diesel=True, ignore_turbocharged=True):
     ICEs = static_df[static_df['Vehicle Type'] == 'ICE']
@@ -91,13 +39,97 @@ def group_into_trips(timeseries):
 
     return trips
 
+def haversine_distance(lat1, lon1, lat2, lon2):
+   r = 6371
+   phi1 = np.radians(lat1)
+   phi2 = np.radians(lat2)
+   delta_phi = np.radians(lat2 - lat1)
+   delta_lambda = np.radians(lon2 - lon1)
+   a = np.sin(delta_phi / 2)**2 + np.cos(phi1) * np.cos(phi2) *   np.sin(delta_lambda / 2)**2
+   res = r * (2 * np.arctan2(np.sqrt(a), np.sqrt(1 - a)))
+   return np.round(res, 20)
 
-class NaChecker():
-    def __init__(self, colname):
-        self.colname = colname
-        
-    def __call__(self, x):
-        return x[self.colname].isna().sum()/len(x)
+def distance_functor():
+    '''
+    Return a function object that, when called with a vehicle's coordinates (Latitude, Longitude in degrees), computes the distance
+    traveled based on the coordinates of the current timestamp and the parameters from the previous call to the function.
+    
+    Calulcates distance using Haversine Formula
+    '''
+    
+    prev_lat = None
+    prev_long = None
+    
+    def wrapped(lat, long):
+        nonlocal prev_lat, prev_long
+        dist = None
+        if prev_lat is not None and prev_long is not None:
+            dist = haversine_distance(prev_lat, prev_long, lat, long)
+            
+        prev_lat = lat
+        prev_long = long
+        return dist
+    return wrapped
 
-ave_speed_func = lambda x:x['Vehicle Speed[km/h]'].mean()
-max_speed_func = lambda x:x['Vehicle Speed[km/h]'].max()
+def accel_functor():
+    '''
+    Return a function object that, when called with a vehicle's velocity (in km/h) 
+    and a timestamp (in ms), computes the acceleration of the vehicle (in mph/s)
+    based on the velocity and time of the given parameters and the parameters from
+    the previous call to the function.
+
+    The reason for the units of mph/s is for compatibility with the power factor
+    formula as presented in the following paper:
+    https://silo.tips/download/a-comparison-of-real-world-and-modeled-emissions-under-conditions-of-variable-dr
+
+
+    This is very convenient to use with Pandas Series objects.
+    For example (where trip is a DataFrame representing a trip):
+    f = accel_functor()
+    a = trip.apply(lambda df : f(df['Vehicle Speed[km/h]'], df['Timestamp(ms)']), axis=1)
+    '''
+    unit_conversion = 621.371 # from kph / ms to mph / s
+
+    prev_v = None
+    prev_t = None
+    def wrapped(v, t):
+        nonlocal prev_v, prev_t
+        a = None
+        if prev_v is not None and prev_t is not None:
+            delta_v = v - prev_v # in km/h
+            delta_t = t - prev_t # in ms
+
+            a = delta_v / delta_t * unit_conversion
+        prev_v = v
+        prev_t = t
+        return a
+    return wrapped
+
+def get_accel(trip):
+    '''
+    Given a trip as a Pandas DataFrame, return a Pandas Series that contains acceleration 
+    data for the vehicle (in mph/s) on that trip.
+
+    The reason for the units of mph/s is for compatibility with the power factor
+    formula as presented in the following paper:
+    https://silo.tips/download/a-comparison-of-real-world-and-modeled-emissions-under-conditions-of-variable-dr
+    '''
+    trip.sort_values(by=['Timestamp(ms)']) # this might be redundant (better safe than sorry)
+    f = accel_functor()
+    return trip.apply(lambda df : f(df['Vehicle Speed[km/h]'], df['Timestamp(ms)']), axis=1)
+
+def get_power_factors(trip):
+    '''
+    Given a trip as a Pandas DataFrame and acceleration as a Pandas Series, return power
+    factor data for the trip as a Pandas Series.
+    '''
+    trip.sort_values(by=['Timestamp(ms)']) # this might be redundant (better safe than sorry)
+    return trip.apply(lambda df : 2 * df['Vehicle Speed[km/h]'] * df['Acceleration[mph/s]'], axis=1)
+
+def aggressivity(trip):
+    '''
+    Given a trip as a Pandas DataFrame, return the aggressivity of the trip.
+    '''
+    power_factors = get_power_factors(trip)
+    return np.sqrt(np.sum(power_factors ** 2) / len(power_factors))
+
