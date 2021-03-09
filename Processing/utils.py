@@ -52,6 +52,34 @@ def haversine_distance(lat1, lon1, lat2, lon2):
 
 def distance_functor():
     '''
+    Return a function object that, when called with a vehicle's velocity in km/h and a current timestamp in ms, 
+    computes the distance traveled in the time interval.
+    '''
+    
+    prev_t = None
+
+    def wrapped(v, t):
+        nonlocal prev_t
+        dist = None
+        if prev_t is not None:
+            delta_t = (t - prev_t) * 1000 * 3600
+            dist = v * (t - prev_t)
+            
+        prev_t = t
+        return dist
+    return wrapped
+
+def get_distances(trip):
+    '''
+    Given a trip in a Pandas DataFrame, return a Pandas Series that contains distance traveled for each datapoint in the trip.
+    Distance is in km.
+    '''
+    trip.sort_values(by=['Timestamp(ms)'])
+    f = distance_functor2()
+    return trip.apply(lambda df : f(df['Vehicle Speed[km/h]'], df['Timestamp(ms)']), axis=1)
+
+def distance_functor2():
+    '''
     Return a function object that, when called with a vehicle's coordinates (Latitude, Longitude in degrees), computes the distance
     traveled based on the coordinates of the current timestamp and the parameters from the previous call to the function.
     
@@ -72,13 +100,13 @@ def distance_functor():
         return dist
     return wrapped
 
-def get_distances(trip):
+def get_distances2(trip):
     '''
     Given a trip in a Pandas DataFrame, return a Pandas Series that contains distance traveled for each datapoint in the trip.
     Distance is in km.
     '''
     trip.sort_values(by=['Timestamp(ms)'])
-    f = distance_functor()
+    f = distance_functor2()
     return trip.apply(lambda df : f(df['Latitude[deg]'], df['Longitude[deg]']), axis=1)
 
 def accel_functor():
