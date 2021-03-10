@@ -47,16 +47,16 @@ train2_score = reg2.score(X2_train, y_train)
 val1_score = reg1.score(X1_val, y_val)
 val2_score = reg2.score(X2_val, y_val)
 
-y1_pred = reg1.predict(X1_test)
-y2_pred = reg2.predict(X2_test)
+y1_pred = reg1.predict(X1_val)
+y2_pred = reg2.predict(X2_val)
 
 print('Train Scores')
 print(f'PKE: {train1_score}\tPF: {train2_score}')
 print('Val Scores')
 print(f'PKE: {val1_score}\tPF: {val2_score}')
 
-plt.scatter(X1_test, y_test,color='black')
-plt.plot(X1_test, y1_pred, color='blue', linewidth=3)
+plt.scatter(X1_val, y_val, color='black')
+plt.plot(X1_val, y1_pred, color='blue', linewidth=3)
 
 plt.xticks((np.arange(0, 500000, 100000)))
 plt.yticks((np.arange(0, 65, 5)))
@@ -67,8 +67,8 @@ plt.title('Preliminary Regression on PKE Aggressiveness Score')
 plt.savefig('pke_simplereg.png')
 
 plt.clf()
-plt.scatter(X2_test, y_test,color='black')
-plt.plot(X2_test, y2_pred, color='blue', linewidth=3)
+plt.scatter(X2_val, y_val, color='black')
+plt.plot(X2_val, y2_pred, color='blue', linewidth=3)
 
 plt.xticks((np.arange(0, 2000, 200)))
 plt.yticks((np.arange(0, 65, 5)))
