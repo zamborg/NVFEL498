@@ -67,7 +67,7 @@ plt.clf()
 plt.scatter(X2_test, y_test,color='black')
 plt.plot(X2_test, y2_pred, color='blue', linewidth=3)
 
-plt.xticks((np.arange(0, 20000, 50)))
+plt.xticks((np.arange(0, 2000, 100)))
 plt.yticks((np.arange(0, 65, 5)))
 
 plt.savefig('pf_simplereg.png')
