@@ -60,7 +60,7 @@ plt.plot(X1_test, y1_pred, color='blue', linewidth=3)
 
 plt.xticks((np.arange(0, 500000, 100000)))
 plt.yticks((np.arange(0, 65, 5)))
-plt.xlabel('PKE Aggressiveness Score')
+plt.xlabel('PKE Aggressiveness Score (unitless)')
 plt.ylabel('Fuel Consumed[L]')
 plt.title('Preliminary Regression on PKE Aggressiveness Score')
 
@@ -72,7 +72,7 @@ plt.plot(X2_test, y2_pred, color='blue', linewidth=3)
 
 plt.xticks((np.arange(0, 2000, 200)))
 plt.yticks((np.arange(0, 65, 5)))
-plt.xlabel('PF Aggressiveness Score')
+plt.xlabel('PF Aggressiveness Score (unitless)')
 plt.ylabel('Fuel Consumed[L]')
 plt.title('Preliminary Regression on PF Aggressiveness Score')
 
