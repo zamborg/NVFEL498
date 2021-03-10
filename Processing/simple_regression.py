@@ -58,7 +58,7 @@ print(f'PKE: {val1_score}\tPF: {val2_score}')
 plt.scatter(X1_test, y_test,color='black')
 plt.plot(X1_test, y1_pred, color='blue', linewidth=3)
 
-plt.xticks((np.arange(0, 1000, 50)))
+plt.xticks((np.arange(0, 500000, 10000)))
 plt.yticks((np.arange(0, 65, 5)))
 
 plt.savefig('pke_simplereg.png')
