@@ -11,14 +11,13 @@ split2 = split1 + num_trips * 3 // 20
 
 pke = df['Aggressiveness']
 pf = df['Aggressivity']
-fuel = df['Fuel Consumed[L]']
+fuel = df['Fuel Economy[mpg]']
 
 idx = pke.isna() | pf.isna() | fuel.isna() | np.isinf(pke) | np.isinf(pf) | np.isinf(fuel)
+print('any true', idx.any())
 pke = pke[~idx]
 pf = pf[~idx]
 fuel = fuel[~idx]
-
-
 
 print(pke[pke.isna()])
 print(pf[pf.isna()])
@@ -27,7 +26,6 @@ print(fuel[fuel.isna()])
 print(sum(pke))
 print(sum(pf))
 print(sum(fuel))
-
 
 X1_train = np.array(pke[:split1]).reshape(-1, 1)
 X1_val = np.array(pke[split1:split2]).reshape(-1, 1)
@@ -50,6 +48,7 @@ val1_score = reg1.score(X1_val, y_val)
 val2_score = reg2.score(X2_val, y_val)
 
 y1_pred = reg1.predict(X1_test)
+y2_pred = reg2.predict(X2_test)
 
 print('Train Scores')
 print(f'PKE: {train1_score}\tPF: {train2_score}')
@@ -63,3 +62,11 @@ plt.xticks(())
 plt.yticks(())
 
 plt.savefig('pke_simplereg.png')
+
+plt.scatter(X2_test, y_test,color='black')
+plt.plot(X2_test, y2_pred, color='blue', linewidth=3)
+
+plt.xticks(())
+plt.yticks(())
+
+plt.savefig('pf_simplereg.png')
