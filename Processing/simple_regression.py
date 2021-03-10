@@ -63,6 +63,7 @@ plt.yticks((np.arange(0, 65, 5)))
 
 plt.savefig('pke_simplereg.png')
 
+plt.clf()
 plt.scatter(X2_test, y_test,color='black')
 plt.plot(X2_test, y2_pred, color='blue', linewidth=3)
 
