@@ -62,7 +62,7 @@ def distance_functor():
         nonlocal prev_t
         dist = None
         if prev_t is not None:
-            delta_t = (t - prev_t) * 1000 * 3600
+            delta_t = (t - prev_t) / 1000 / 3600
             dist = v * (t - prev_t)
             
         prev_t = t
@@ -181,7 +181,7 @@ def aggressiveness(trip):
     distances = get_distances(trip)
     return np.sum(pkes) / np.sum(distances)
 
-def fuel_algo(x, nonEVs):
+def fuel_algo(x):
         # first do everything for MAF non NA
         # then for all MAF NA values, do absLoad calculation
         # Because NA denom or numer => NAN => NA in both => NAN
