@@ -63,7 +63,9 @@ def distance_functor():
         dist = None
         if prev_t is not None:
             delta_t = (t - prev_t) / 1000 / 3600
-            dist = v * (t - prev_t)
+            dist = v * delta_t
+        else:
+          dist = 0
             
         prev_t = t
         return dist
@@ -75,7 +77,7 @@ def get_distances(trip):
     Distance is in km.
     '''
     trip.sort_values(by=['Timestamp(ms)'])
-    f = distance_functor2()
+    f = distance_functor()
     return trip.apply(lambda df : f(df['Vehicle Speed[km/h]'], df['Timestamp(ms)']), axis=1)
 
 def distance_functor2():
