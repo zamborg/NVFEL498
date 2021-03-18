@@ -30,7 +30,6 @@ for i, path in enumerate(paths):
   except Exception as e:
     print(f'Error opening file {i}')
     print(e)
-    l.append(np.nan)
   '''
   '''
 
