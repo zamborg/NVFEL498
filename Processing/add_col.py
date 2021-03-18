@@ -17,23 +17,23 @@ for i, path in enumerate(paths):
   if i % 1000 == 0:
     print(i)
   #path = os.path.join(processed_data_path, 'ICE_trips', f'ICE_trip{i}.csv')
-  try:
-    trip = pd.read_csv(path)
-    vid = trip['VehId']
-    tripid = trip['Trip']
-    if tripid == d['TripId'].iloc[i]:
-        d['VehId'].append(vid)
-    else:
-        print('not found')
-        continue
-
-  except Exception as e:
-    print(f'Error opening file {i}')
-    print(e)
-  '''
-  '''
+  trip = pd.read_csv(path)
+  vid = trip['VehId']
+  tripid = trip['Trip'].iloc[0]
+  print(d['TripId'].iloc[i])
+  print(tripid)
+  if tripid == d['TripId'].iloc[i]:
+    print('found')  
+    d['VehId'].append(vid)
+  else:
+      print('not found')
+      continue
 
 df = pd.DataFrame(d)
 f = open(temp_alltrips_path, 'w')
 df.to_csv(f)
+  #except Exception as e:
+  #  print(f'Error opening file {i}')
+  #  print(e)
+
   
