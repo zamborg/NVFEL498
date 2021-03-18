@@ -21,7 +21,7 @@ for i, path in enumerate(paths):
     trip = pd.read_csv(path)
     vid = trip['VehId']
     tripid = trip['Trip']
-    if tripid == d['TripId'].iloc[i]:
+    if tripid == d['TripId'][i]:
         d['VehId'].append(vid)
     else:
         print('not found')
