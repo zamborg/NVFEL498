@@ -56,3 +56,13 @@ plt.title('Grouped Regression')
 
 plt.savefig('grouped_regression.png')
 
+plt.clf()
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.scatter(X_val[:, 0], X_val[:, 2] / X_val[:, 1], y_val, marker='.', color='red')
+ax.set_xlabel('PKE')
+ax.set_ylabel('Dispalcement / Weight')
+ax.set_zlabel('Fuel Economy[mpg]')
+
+ax.plot_surface(X_val[:, 0], X_val[:, 2] / X_val[:, 1], y_pred)
+plt.savefig('grouped_regression_3d.png')
