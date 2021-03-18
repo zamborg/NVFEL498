@@ -6,7 +6,7 @@ import numpy as np
 
 processed_data_path = '/nfs/turbo/midas-applied-ds/Data/Processed'
 paths = glob.glob(os.path.join(processed_data_path, 'ICE_trips', 'ICE_trip*.csv'))
-alltrips_path = os.path.join(processed_data_path, 'ICE_trips', 'alltrips.csv')
+alltrips_path = os.path.join(processed_data_path, 'ICE_trips', 'alltrips2.csv')
 
 num_trips = 17737
 l = []
