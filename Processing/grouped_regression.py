@@ -19,6 +19,16 @@ print('any true', idx.any())
 X = X[~idx]
 Y = Y[~idx]
 
+print(d >= 2.0 & d <= 2.2)
+
+pke = X['Aggressiveness']
+pke = pke[d >= 2.0]
+pke = pke[d <= 2.2]
+X = pke[w == 3500]
+Y = Y[d >= 2.0]
+Y = Y[d <= 2.2]
+Y = Y[w == 3500]
+
 num_trips = len(X)
 split1 = num_trips * 7 // 10
 split2 = split1 + num_trips * 3 // 20
