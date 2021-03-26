@@ -3,16 +3,15 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-df = pd.read_csv('../../alltrips.csv')
+df = pd.read_csv('../../alltrips_with_weight_and_disp.csv')
 print(df)
 
 
 pke = df['Aggressiveness']
 pf = df['Aggressivity']
 fuel = df['Fuel Rate[gpm]']
-tmp = df['Fuel Economy[mpg]']
 
-idx = pke.isna() | pf.isna() | fuel.isna() | np.isinf(pke) | np.isinf(pf) | np.isinf(fuel) | np.isinf(tmp)
+idx = pke.isna() | pf.isna() | fuel.isna() | np.isinf(pke) | np.isinf(pf) | np.isinf(fuel)
 
 print(np.sum(idx))
 

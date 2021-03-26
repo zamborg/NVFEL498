@@ -4,9 +4,7 @@ from utils import aggressivity, aggressiveness
 import pandas as pd
 import numpy as np
 
-processed_data_path = '/nfs/turbo/midas-applied-ds/Data/Processed'
-paths = glob.glob(os.path.join(processed_data_path, 'ICE_trips', 'ICE_trip*.csv'))
-alltrips_path = os.path.join(processed_data_path, 'ICE_trips', 'alltrips2.csv')
+paths = ['sample_processed_trip.csv']
 
 num_trips = 17737
 l = []
@@ -36,6 +34,7 @@ for i, path in enumerate(paths):
     
     pf = aggressivity(trip)
     pke = aggressiveness(trip)
+    print(pke)
     total_d = np.sum(distance)
     total_fuel = np.sum(distance / fuel_comp)
     
