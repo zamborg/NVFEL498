@@ -200,7 +200,8 @@ def pke(d, v, a):
 def aggressiveness(trip):
     d = get_distances(trip)
     v = trip['Vehicle Speed[km/h]']
-    a = np.append(np.array([0]), v[1:] - v[:-1])
+    a = trip['Acceleration[mph/s]']
+    a[0] = 0
     return pke(d, v, a)
 
 def fuel_algo(x):
