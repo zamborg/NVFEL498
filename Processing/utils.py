@@ -173,15 +173,35 @@ def aggressivity(trip):
     power_factors = get_power_factors(trip)
     return np.sqrt(np.sum(power_factors ** 2) / len(power_factors))
 
-# don't we need to consider the mass of the vehicle?
-def get_pkes(trip):
-    trip.sort_values(by=['Timestamp(ms)']) # this might be redundant (better safe than sorry)
-    return trip.apply(lambda df : 1/2 * df['Vehicle Speed[km/h]'] ** 2, axis=1)
+def pke(d, v, a):
+    begin_accel = None
+    end_accel = None
+    total = 0
+    for i in range(len(a)):
+        if a[i] > 0:
+            if begin_accel is None:
+                begin_accel = i - 1
+        else:
+            end_accel = i - 1
+            if begin_accel is not None:
+                
+                pke_segment = v[end_accel] ** 2 - v[begin_accel] ** 2
+                assert(pke_segment > 0)
+
+                total += pke_segment
+                begin_accel = None
+
+    if begin_accel < len(a) - 1:
+        pke_segment = v[len(a) - 1] ** 2 - v[begin_accel] ** 2
+        total += pke_segment
+    
+    return total / np.sum(d)
 
 def aggressiveness(trip):
-    pkes = get_pkes(trip)
-    distances = get_distances(trip)
-    return np.sum(pkes) / np.sum(distances)
+    d = get_distances(trip)
+    v = trip['Vehicle Speed[km/h]']
+    a = np.append(np.array([0]), v[1:] - v[:-1])
+    return pke(d, v, a)
 
 def fuel_algo(x):
         # first do everything for MAF non NA
