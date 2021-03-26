@@ -12,9 +12,8 @@ pke = df['Aggressiveness']
 weight = df['Weight']
 disp = df['Displacement']
 fuel = df['Fuel Rate[gpm]']
-tmp = df['Fuel Economy[mpg]']
 
-vars = [pke, weight, disp, fuel, tmp, disp/weight]
+vars = [pke, weight, disp, fuel, disp/weight]
 
 d = {'pke': pke, 'disp/weight': disp / weight}
 X = pd.DataFrame(d)

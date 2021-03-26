@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-df = pd.read_csv('../../alltrips_with_weight_and_disp.csv')
+df = pd.read_csv('../../alltrips.csv')
 print(df)
 
 
