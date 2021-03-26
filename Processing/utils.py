@@ -191,7 +191,7 @@ def pke(d, v, a):
                 total += pke_segment
                 begin_accel = None
 
-    if begin_accel < len(a) - 1:
+    if begin_accel is not None and begin_accel < len(a) - 1:
         pke_segment = v[len(a) - 1] ** 2 - v[begin_accel] ** 2
         total += pke_segment
     
