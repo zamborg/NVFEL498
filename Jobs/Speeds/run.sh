@@ -10,7 +10,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --mem-per-cpu=8000m 
-#SBATCH --time=1:00:00
+#SBATCH --time=3:00:00
 #SBATCH --account=eecs498s009w21_class
 #SBATCH --partition=standard
 
