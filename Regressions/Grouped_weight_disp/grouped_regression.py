@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-df = pd.read_csv('../../../Data/Processed/ICE_trips/alltrips_with_weight_and_disp.csv')
+df = pd.read_csv('../../alltrips.csv')
 
 X = df[['Aggressiveness', 'Weight', 'Displacement']]
 Y = df['Fuel Economy[mpg]']
@@ -18,6 +18,16 @@ print('any true', idx.any())
 
 X = X[~idx]
 Y = Y[~idx]
+
+print(d >= 2.0 & d <= 2.2)
+
+pke = X['Aggressiveness']
+pke = pke[d >= 2.0]
+pke = pke[d <= 2.2]
+X = pke[w == 3500]
+Y = Y[d >= 2.0]
+Y = Y[d <= 2.2]
+Y = Y[w == 3500]
 
 num_trips = len(X)
 split1 = num_trips * 7 // 10
