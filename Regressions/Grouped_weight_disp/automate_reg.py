@@ -9,9 +9,8 @@ pke = df['Aggressiveness']
 weight = df['Weight']
 disp = df['Displacement']
 fuel = df['Fuel Rate[gpm]']
-tmp = df['Fuel Economy[mpg]']
 
-vars = [pke, weight, disp, fuel, tmp]
+vars = [pke, weight, disp, fuel]
 
 valid_data = fuel.isna()
 for var in vars:
@@ -79,7 +78,7 @@ def run_reg(minW, maxW, minD, maxD):
 input_file = open('input.txt', 'r')
 
 w = np.arange(2500, 4501, 1000)
-d = np.arange(2.0, 4.01, .2)
+d = np.arange(2.0, 4.01, .5)
 
 for i in range(len(w) - 1):
     minW, maxW = w[i], w[i + 1]

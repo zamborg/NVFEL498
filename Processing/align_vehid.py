@@ -1,9 +1,9 @@
 import pandas as pd
 import numpy as np
 
-trip_data_path = '/nfs/turbo/midas-applied-ds/Data/Processed/ICE_trips/alltrips2.csv'
-static_data_path = '/nfs/turbo/midas-applied-ds/Project/NVFEL498/VED_Static_Data_ICE_HEV.csv'
-temp_data_path = '/nfs/turbo/midas-applied-ds/Data/Processed/ICE_trips/alltrips_with_weight_and_disp.csv'
+trip_data_path = 'alltrips_with_weight_and_disp.csv'
+static_data_path = 'VED_Static_Data_ICE_HEV.csv'
+temp_data_path = 'alltrips_with_weight_and_disp.csv'
 
 static_df = pd.read_csv(static_data_path)
 trips = pd.read_csv(trip_data_path)
@@ -23,7 +23,8 @@ for vid in trips['VehId']:
     weights.append(np.nan)
   disp_str = row['Engine Configuration & Displacement']
   try:
-    disp = disp_str.str.extract(r'(\d\.\d)')
+    disp = disp_str.str.extract(r'(\d\.\d)').iloc[0]
+    disp=float(disp)
     displacements.append(disp)
   except Exception as e:
     print(e)
