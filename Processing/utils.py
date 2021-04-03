@@ -197,12 +197,78 @@ def pke(d, v, a):
     
     return total / np.sum(d)
 
+def normalized_pke1(d, v, a):
+    begin_accel = None
+    end_accel = None
+    total = 0
+    count = 0
+    for i in range(len(a)):
+        if a[i] > 0:
+            if begin_accel is None:
+                begin_accel = i - 1
+        else:
+            end_accel = i - 1
+            if begin_accel is not None:
+                
+                pke_segment = v[end_accel] ** 2 - v[begin_accel] ** 2
+                assert(pke_segment > 0)
+
+                total += pke_segment
+                count += 1
+                begin_accel = None
+
+    if begin_accel is not None and begin_accel < len(a) - 1:
+        pke_segment = v[len(a) - 1] ** 2 - v[begin_accel] ** 2
+        total += pke_segment
+        count += 1
+    
+    return total / np.sum(d) / count
+
+def normalized_pke2(d, v, a):
+    begin_accel = None
+    end_accel = None
+    total = 0
+    count = 0
+    for i in range(len(a)):
+        if a[i] > 0:
+            if begin_accel is None:
+                begin_accel = i - 1
+        else:
+            end_accel = i - 1
+            if begin_accel is not None:
+                
+                pke_segment = v[end_accel] ** 2 - v[begin_accel] ** 2
+                assert(pke_segment > 0)
+
+                total += pke_segment
+                begin_accel = None
+
+    if begin_accel is not None and begin_accel < len(a) - 1:
+        pke_segment = v[len(a) - 1] ** 2 - v[begin_accel] ** 2
+        total += pke_segment
+    
+    return total / np.sum(d) / len(a)
+
 def aggressiveness(trip):
     d = get_distances(trip)
     v = trip['Vehicle Speed[km/h]']
     a = trip['Acceleration[mph/s]']
     a[0] = 0
     return pke(d, v, a)
+
+def normalized_aggressiveness1(trip):
+    d = get_distances(trip)
+    v = trip['Vehicle Speed[km/h]']
+    a = trip['Acceleration[mph/s]']
+    a[0] = 0
+    return normalized_pke1(d, v, a)
+
+def normalized_aggressiveness2(trip):
+    d = get_distances(trip)
+    v = trip['Vehicle Speed[km/h]']
+    a = trip['Acceleration[mph/s]']
+    a[0] = 0
+    return normalized_pke2(d, v, a)
 
 def fuel_algo(x):
         # first do everything for MAF non NA
