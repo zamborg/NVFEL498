@@ -228,7 +228,6 @@ def normalized_pke2(d, v, a):
     begin_accel = None
     end_accel = None
     total = 0
-    count = 0
     for i in range(len(a)):
         if a[i] > 0:
             if begin_accel is None:
@@ -260,14 +259,12 @@ def normalized_aggressiveness1(trip):
     d = get_distances(trip)
     v = trip['Vehicle Speed[km/h]']
     a = trip['Acceleration[mph/s]']
-    a[0] = 0
     return normalized_pke1(d, v, a)
 
 def normalized_aggressiveness2(trip):
     d = get_distances(trip)
     v = trip['Vehicle Speed[km/h]']
     a = trip['Acceleration[mph/s]']
-    a[0] = 0
     return normalized_pke2(d, v, a)
 
 def fuel_algo(x):
