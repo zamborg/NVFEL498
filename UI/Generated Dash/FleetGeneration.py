@@ -1,6 +1,33 @@
 import pandas as pd
 import numpy as np
 
+features = [
+    'Aggressiveness',
+    'Weight',
+    'Displacement',
+    'Air Temperature[F]',
+    'Precipitation Level[mm]',
+    'SpeedAverage',
+    'Aggressiveness*SpeedAverage',
+    'Aggressiveness*Weight',
+    'Aggressiveness*Displacement',
+    'Displacement/Weight'
+]
+
+def transform_data(data, features, out = 'Fuel Rate[gpm]'):
+    d = pd.DataFrame(columns = features)
+    
+    for f in features:
+        if '*' in f:
+            f1, f2 = f.split('*')
+            d[f] = data[f1] * data[f2]
+        elif '/' in f:
+            f1, f2 = f.split('/')
+            d[f] = data[f1] / data[f2]
+        else:
+            d[f] = data[f]
+            
+    return np.array(d), np.array(data[out]), {f:i for i,f in enumerate(features)}
 
 def generate_trip_data(**kwargs):
     """
@@ -71,7 +98,6 @@ def generate_trip_data(**kwargs):
             
     return pd.DataFrame(data)
 
-
 #fleet_cols = ['Hybridization', 'Weight (units)', 'Displacement (units)', 'Aggressiveness Percentile',
 #                 'Average Speed (units)', 'Speed Variance (units)', 'Air Temperature (units)',
 #                 'Precipitation Level (units)', 'Distance (units)']
@@ -101,3 +127,4 @@ class ManualFleet():
         return self.data
     def show(self):
         return self.data
+    
