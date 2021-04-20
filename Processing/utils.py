@@ -267,7 +267,45 @@ def normalized_aggressiveness2(trip):
     a = trip['Acceleration[mph/s]']
     return normalized_pke2(d, v, a)
 
-def fuel_algo(x):
+
+
+def fuel_algo(x, nonEVs):
+        # first do everything for MAF non NA
+        # then for all MAF NA values, do absLoad calculation
+        # Because NA denom or numer => NAN => NA in both => NAN
+        sec_hour = 3600
+        air_to_fuel = 14.08
+        fuel_density = 820
+        
+        out = pd.DataFrame(np.zeros(shape=(len(x),)))
+        
+        maf_screen = np.array(x['MAF[g/sec]'].isna()).reshape(-1,)
+        maf = x['MAF[g/sec]'][~maf_screen]
+        v = x['Vehicle Speed[km/h]'][~maf_screen]
+        out[~maf_screen] = np.array(maf * sec_hour / air_to_fuel / fuel_density / v).reshape(-1,1)
+
+
+        VehID = x['VehId'].iloc[0]
+        absLoad = x[maf_screen]['Absolute Load[%]']
+        RPM = x[maf_screen]['Engine RPM[RPM]']
+        fuel_flow = x[maf_screen]['MAF[g/sec]']
+        displacement = nonEVs.loc[nonEVs['VehId']==VehID, 'Engine Configuration & Displacement']
+        if len(displacement) == 0:
+            return pd.DataFrame(np.zeros(shape=(len(x))))
+        displacement = displacement.iloc[0]
+        displacement = re.findall(r"\d\.\d",displacement)
+        if len(displacement) != 1:
+            raise Exception('Something Broke in displacement string search')
+        displacement = float(displacement[0].strip("L"))
+        maf = 1.84 * displacement * absLoad/100 * RPM/2/60
+        fuel_flow = (maf*sec_hour)/(air_to_fuel*fuel_density) #update out where MAF is NAN
+        out[maf_screen] = np.array(1/(fuel_flow/x[maf_screen]['Vehicle Speed[km/h]'])).reshape(-1,1)
+        
+        out.replace(float('inf'), 0, inplace=True)
+        
+        return pd.Series(out.iloc[:,0])
+
+def fuel_algo2(x, nonEVs):
         # first do everything for MAF non NA
         # then for all MAF NA values, do absLoad calculation
         # Because NA denom or numer => NAN => NA in both => NAN
@@ -303,7 +341,7 @@ def fuel_algo(x):
         return pd.Series(out.iloc[:,0])
         
 
-def fuel_algo2(x, displacement):
+def fuel_algo3(x, nonEVs, VehID):
     # first do everything for MAF non NA
     # then for all MAF NA values, do absLoad calculation
     # Because NA denom or numer => NAN => NA in both => NAN
@@ -321,6 +359,13 @@ def fuel_algo2(x, displacement):
     absLoad = x[~maf_screen]['Absolute Load[%]']
     RPM = x[~maf_screen]['Engine RPM[RPM]']
     fuel_flow = x[~maf_screen]['MAF[g/sec]']
+    displacement = nonEVs.loc[nonEVs['VehId']==VehID, 'Engine Configuration & Displacement']
+    if len(displacement) == 0:
+        return pd.DataFrame(np.zeros(shape=(len(x))))
+    displacement = displacement.iloc[0]
+    displacement = re.findall(r"\d\.\d",displacement)
+    if len(displacement) != 1:
+        raise Exception('Something Broke in displacement string search')
     displacement = float(displacement[0].strip("L"))
     maf = 1.84 * displacement * absLoad/100 * RPM/2/60
     fuel_flow[~maf_screen] = list((maf*sec_hour)/(air_to_fuel*fuel_density)) #update out where MAF is NAN
@@ -329,3 +374,8 @@ def fuel_algo2(x, displacement):
     out.replace(float('inf'), 0, inplace=True)
     
     return pd.Series(out.iloc[:,0])
+
+def get_fuel(trip, nonEVs):
+    f = fuel_algo(trip, nonEVs)
+    d = get_distances(trip)
+    return np.sum(f * d)
