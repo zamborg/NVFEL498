@@ -164,7 +164,7 @@ def get_power_factors(trip):
     factor data for the trip as a Pandas Series.
     '''
     trip.sort_values(by=['Timestamp(ms)']) # this might be redundant (better safe than sorry)
-    return trip.apply(lambda df : 2 * df['Vehicle Speed[km/h]'] * df['Acceleration[mph/s]'], axis=1)
+    return trip.apply(lambda df : 2 * df['Vehicle Speed[km/h]'] * get_accel(df), axis=1)
 
 def aggressivity(trip):
     '''
@@ -251,20 +251,20 @@ def normalized_pke2(d, v, a):
 def aggressiveness(trip):
     d = get_distances(trip)
     v = trip['Vehicle Speed[km/h]']
-    a = trip['Acceleration[mph/s]']
+    a = get_accel(trip)
     a[0] = 0
     return pke(d, v, a)
 
 def normalized_aggressiveness1(trip):
     d = get_distances(trip)
     v = trip['Vehicle Speed[km/h]']
-    a = trip['Acceleration[mph/s]']
+    a = get_accel(trip)
     return normalized_pke1(d, v, a)
 
 def normalized_aggressiveness2(trip):
     d = get_distances(trip)
     v = trip['Vehicle Speed[km/h]']
-    a = trip['Acceleration[mph/s]']
+    a = get_accel(trip)
     return normalized_pke2(d, v, a)
 
 
