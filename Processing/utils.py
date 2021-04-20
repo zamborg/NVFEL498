@@ -76,7 +76,6 @@ def get_distances(trip):
     Given a trip in a Pandas DataFrame, return a Pandas Series that contains distance traveled for each datapoint in the trip.
     Distance is in km.
     '''
-    trip.sort_values(by=['Timestamp(ms)'])
     f = distance_functor()
     return trip.apply(lambda df : f(df['Vehicle Speed[km/h]'], df['Timestamp(ms)']), axis=1)
 
@@ -107,7 +106,6 @@ def get_distances2(trip):
     Given a trip in a Pandas DataFrame, return a Pandas Series that contains distance traveled for each datapoint in the trip.
     Distance is in km.
     '''
-    trip.sort_values(by=['Timestamp(ms)'])
     f = distance_functor2()
     return trip.apply(lambda df : f(df['Latitude[deg]'], df['Longitude[deg]']), axis=1)
 
@@ -154,7 +152,6 @@ def get_accel(trip):
     formula as presented in the following paper:
     https://silo.tips/download/a-comparison-of-real-world-and-modeled-emissions-under-conditions-of-variable-dr
     '''
-    trip.sort_values(by=['Timestamp(ms)']) # this might be redundant (better safe than sorry)
     f = accel_functor()
     return trip.apply(lambda df : f(df['Vehicle Speed[km/h]'], df['Timestamp(ms)']), axis=1)
 
@@ -163,7 +160,6 @@ def get_power_factors(trip):
     Given a trip as a Pandas DataFrame and acceleration as a Pandas Series, return power
     factor data for the trip as a Pandas Series.
     '''
-    trip.sort_values(by=['Timestamp(ms)']) # this might be redundant (better safe than sorry)
     return trip.apply(lambda df : 2 * df['Vehicle Speed[km/h]'] * get_accel(df), axis=1)
 
 def aggressivity(trip):
