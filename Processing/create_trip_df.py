@@ -4,9 +4,9 @@ from utils import aggressivity, aggressiveness
 import pandas as pd
 import numpy as np
 
-paths = ['sample_processed_trip.csv']
+paths = os.listdir('/nfs/turbo/midas-applied-ds/Data/Processed/HEV_trips/')
+alltrips_path = ('/nfs/turbo/midas-applied-ds/Project/NVFEL498/all_HEV_trips.csv/')
 
-num_trips = 17737
 l = []
 
 d = {
@@ -65,4 +65,3 @@ for i, path in enumerate(paths):
 df = pd.DataFrame(d)
 f = open(alltrips_path, 'w')
 df.to_csv(f)
-  
