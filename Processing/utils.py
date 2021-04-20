@@ -71,7 +71,7 @@ def distance_functor():
         return dist
     return wrapped
 
-def get_distances(trip):
+def get_distances2(trip):
     '''
     Given a trip in a Pandas DataFrame, return a Pandas Series that contains distance traveled for each datapoint in the trip.
     Distance is in km.
@@ -79,35 +79,11 @@ def get_distances(trip):
     f = distance_functor()
     return trip.apply(lambda df : f(df['Vehicle Speed[km/h]'], df['Timestamp(ms)']), axis=1)
 
-def distance_functor2():
-    '''
-    Return a function object that, when called with a vehicle's coordinates (Latitude, Longitude in degrees), computes the distance
-    traveled based on the coordinates of the current timestamp and the parameters from the previous call to the function.
-    
-    Calulcates distance using Haversine Formula
-    '''
-    
-    prev_lat = None
-    prev_long = None
-    
-    def wrapped(lat, long):
-        nonlocal prev_lat, prev_long
-        dist = None
-        if prev_lat is not None and prev_long is not None:
-            dist = haversine_distance(prev_lat, prev_long, lat, long)
-            
-        prev_lat = lat
-        prev_long = long
-        return dist
-    return wrapped
+def get_distances(trip):
+    t = trip['Timestamp(ms)']
+    delta_t = np.append(np.array([0]), t[1:] - t[:-1]) / 1000 / 3600
+    return delta_t * trip['Vehicle Speed[km/h]']
 
-def get_distances2(trip):
-    '''
-    Given a trip in a Pandas DataFrame, return a Pandas Series that contains distance traveled for each datapoint in the trip.
-    Distance is in km.
-    '''
-    f = distance_functor2()
-    return trip.apply(lambda df : f(df['Latitude[deg]'], df['Longitude[deg]']), axis=1)
 
 def accel_functor():
     '''
@@ -143,7 +119,7 @@ def accel_functor():
         return a
     return wrapped
 
-def get_accel(trip):
+def get_accel2(trip):
     '''
     Given a trip as a Pandas DataFrame, return a Pandas Series that contains acceleration 
     data for the vehicle (in mph/s) on that trip.
@@ -154,6 +130,14 @@ def get_accel(trip):
     '''
     f = accel_functor()
     return trip.apply(lambda df : f(df['Vehicle Speed[km/h]'], df['Timestamp(ms)']), axis=1)
+
+def get_accel(trip):
+    unit_conversion = 621.371 # from kph / ms to mph / s
+    t = trip['Timestamp(ms)']
+    v = trip['Vehicle Speed[km/h]']
+    delta_t = np.append(np.array([0]), t[1:] - t[:-1])
+    delta_v = np.append(np.array([0]), v[1:] - v[:-1])
+    return delta_v / delta_t * unit_conversion
 
 def get_power_factors(trip):
     '''
