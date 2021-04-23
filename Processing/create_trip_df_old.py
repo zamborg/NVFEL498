@@ -4,9 +4,9 @@ from utils import aggressivity, aggressiveness
 import pandas as pd
 import numpy as np
 
-HEV_trip_path = '/nfs/turbo/midas-applied-ds/Data/Processed/HEV_trips/'
+HEV_trip_path = '/nfs/turbo/midas-applied-ds/Data/Processed/PHEV_trips/'
 paths = os.listdir(HEV_trip_path)
-alltrips_path = ('/nfs/turbo/midas-applied-ds/Project/NVFEL498/all_HEV_trips.csv')
+alltrips_path = ('/nfs/turbo/midas-applied-ds/Project/NVFEL498/all_PHEV_trips.csv')
 
 num_trips = 17737
 l = []
@@ -31,12 +31,12 @@ for i, path in enumerate(paths):
   #path = os.path.join(processed_data_path, 'ICE_trips', f'ICE_trip{i}.csv')
   try:
     trip = pd.read_csv(path)
-    fuel_comp = 1 / trip['Fuel Rate [L/km']
+    fuel_comp = trip['Fuel Rate [L/km]']
     distance = trip['Distance[km]']
     
     pke = aggressiveness(trip)
     total_d = np.sum(distance)
-    total_fuel = np.sum(distance / fuel_comp)
+    total_fuel = np.sum(distance * fuel_comp)
     
     raw_trip_ids = trip['Trip'].unique()
     assert(len(raw_trip_ids) == 1)
