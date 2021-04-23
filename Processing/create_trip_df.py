@@ -1,11 +1,13 @@
 import glob
 import os
-from utils import aggressivity, aggressiveness, get_fuel, get_distances
+from utils import aggressivity, aggressiveness
 import pandas as pd
 import numpy as np
 
 paths = os.listdir('/nfs/turbo/midas-applied-ds/Data/Processed/HEV_trips/')
-alltrips_path = ('/nfs/turbo/midas-applied-ds/Project/NVFEL498/all_HEV_trips.csv')
+alltrips_path = ('/nfs/turbo/midas-applied-ds/Project/NVFEL498/all_HEV_trips.csv/')
+
+
 
 l = []
 
@@ -19,8 +21,6 @@ d = {
   'Fuel Consumed[L]' : [],
   'Fuel Rate[gpm]' : [],
 }
-
-nonEVs = pd.read_csv('/nfs/turbo/midas-applied-ds/Project/NVFEL498/VED_Static_Data_ICE_HEV.csv')
 
 def nacheck(x):
   return pd.isna(x) or np.isinf(x) or x == 0
