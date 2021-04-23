@@ -4,9 +4,9 @@ from utils import aggressivity, aggressiveness
 import pandas as pd
 import numpy as np
 
-HEV_trip_path = '/nfs/turbo/midas-applied-ds/Data/Processed/PHEV_trips/'
+HEV_trip_path = '/nfs/turbo/midas-applied-ds/Data/Processed/HEV_trips/'
 paths = os.listdir(HEV_trip_path)
-alltrips_path = ('/nfs/turbo/midas-applied-ds/Project/NVFEL498/all_PHEV_trips.csv')
+alltrips_path = ('/nfs/turbo/midas-applied-ds/Project/NVFEL498/all_HEV_trips.csv')
 
 num_trips = 17737
 l = []

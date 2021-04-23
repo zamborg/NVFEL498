@@ -9,14 +9,11 @@ def append_accel_info(path):
   trip = pd.read_csv(path)
   f = accel_functor()
   trip['Acceleration[mph/s]'] = trip.apply(lambda df : f(df['Vehicle Speed[km/h]'], df['Timestamp(ms)']), axis=1)
-  f = open(path, 'w')
   trip.to_csv(path)
 
 def append_dist_info(path):
   trip = pd.read_csv(path)
-  f = distance_functor()
-  trip['Distance[km]'] = trip.apply(lambda df : f(df['Latitude[deg]'], df['Longitude[deg]']), axis=1)
-  f = open(path, 'w')
+  trip['Distance[km]'] = get_distances(trip)
   trip.to_csv(path)
 
 def append_fuel_info(path):
@@ -27,8 +24,7 @@ def append_fuel_info(path):
   
   displacement = displacement.unique()[0]
   displacement = re.findall(r"\d.\d", displacement)
-  trip['Fuel Rate [L/km'] = fuel_algo(trip, displacement)
-  f = open(path, 'w')
+  trip['Fuel Rate [L/km]'] = fuel_algo(trip, displacement)
   trip.to_csv(path)
 
 paths = glob.glob(os.path.join(processed_data_path, 'HEV_trips', '*.csv'))
