@@ -24,6 +24,7 @@ d = {
 def nacheck(x):
   return pd.isna(x) or np.isinf(x) or x == 0
 
+total = 0
 for i, path in enumerate(paths):
   path = os.path.join(HEV_trip_path, path)
   if i % 1000 == 0:
@@ -36,7 +37,9 @@ for i, path in enumerate(paths):
     
     pke = aggressiveness(trip)
     total_d = np.sum(distance)
-    total_fuel = np.sum(distance / fuel_comp)
+    fuel = distance / fuel_comp
+    fuel = np.nan_to_num(fuel, posinf=0)
+    total_fuel = np.sum(fuel)
     
     raw_trip_ids = trip['Trip'].unique()
     assert(len(raw_trip_ids) == 1)
@@ -44,6 +47,8 @@ for i, path in enumerate(paths):
     assert(len(raw_trip_ids) == 1)
 
     if nacheck(total_fuel) or nacheck(total_d) or nacheck(pke):
+      print(total_fuel, total_d, pke)
+      total += 1
       continue
 
 
@@ -58,8 +63,7 @@ for i, path in enumerate(paths):
     print(f'Error opening file {i}')
     print(e)
     l.append(np.nan)
-  '''
-  '''
+print(total)
 
 df = pd.DataFrame(d)
 f = open(alltrips_path, 'w')
