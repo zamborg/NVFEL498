@@ -16,7 +16,6 @@ PHEV_BEV = pd.read_csv('../VED_Static_Data_PHEV_EV.csv')
 static = pd.concat([ICE_HEV, PHEV_BEV])
 
 paths = glob.glob(os.path.join(raw_data_path, '*.csv'))
-paths = [os.path.join(raw_data_path, 'VED_171101_week.csv')]
 
 entries = set()
 w = 0
