@@ -82,10 +82,6 @@ def get_distances2(trip):
 def get_distances(trip):
     t = np.array(trip['Timestamp(ms)'])
     delta_t = np.append(np.array([0]), t[1:] - t[:-1]) / 1000 / 3600
-    print(delta_t[:10])
-    print(trip['Vehicle Speed[km/h]'])
-    print('honky')
-    print(delta_t * trip['Vehicle Speed[km/h]'])
     return delta_t * trip['Vehicle Speed[km/h]']
 
 
@@ -252,6 +248,37 @@ def normalized_aggressiveness2(trip):
     a = get_accel(trip)
     return normalized_pke2(d, v, a)
 
+'''
+def fuel_algo(x, displacement):
+        # first do everything for MAF non NA
+        # then for all MAF NA values, do absLoad calculation
+        # Because NA denom or numer => NAN => NA in both => NAN
+        sec_hour = 3600
+        air_to_fuel = 14.08
+        fuel_density = 820
+        
+        out = pd.DataFrame(np.zeros(shape=(len(x))))
+        
+        maf_screen = np.array(x['MAF[g/sec]'].isna()).reshape(-1,1)
+        maf = x[maf_screen]['MAF[g/sec]']
+        fuel_flow = (maf*sec_hour)/(air_to_fuel*fuel_density)
+        out[maf_screen] = list(1/(fuel_flow/x[maf_screen]['Vehicle Speed[km/h]']))
+        
+        VehID = x['VehId'].iloc[0]
+        absLoad = x[~maf_screen]['Absolute Load[%]']
+        RPM = x[~maf_screen]['Engine RPM[RPM]']
+        fuel_flow = x[~maf_screen]['MAF[g/sec]']
+        if len(displacement) != 1:
+            raise Exception('Something Broke in displacement string search')
+        displacement = float(displacement[0].strip("L"))
+        maf = 1.84 * displacement * absLoad/100 * RPM/2/60
+        fuel_flow = (maf*sec_hour)/(air_to_fuel*fuel_density) #update out where MAF is NAN
+        out[~maf_screen] = list(1/(fuel_flow/x[maf_screen]['Vehicle Speed[km/h]']))
+        
+        out.replace(float('inf'), 0, inplace=True)
+        
+        return pd.Series(out.iloc[:,0])
+'''
 
 def fuel_algo(x, nonEVs):
         # first do everything for MAF non NA
@@ -282,7 +309,7 @@ def fuel_algo(x, nonEVs):
         displacement = float(displacement[0].strip("L"))
         maf = 1.84 * displacement * absLoad/100 * RPM/2/60
         fuel_flow = (maf*sec_hour)/(air_to_fuel*fuel_density) #update out where MAF is NAN
-        out[~maf_screen] = list(1/(fuel_flow/x[maf_screen]['Vehicle Speed[km/h]']))
+        out[~maf_screen] = list(1/(fuel_flow/x[~maf_screen]['Vehicle Speed[km/h]']))
         
         out.replace(float('inf'), 0, inplace=True)
         

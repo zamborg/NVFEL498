@@ -31,12 +31,12 @@ for i, path in enumerate(paths):
   #path = os.path.join(processed_data_path, 'ICE_trips', f'ICE_trip{i}.csv')
   try:
     trip = pd.read_csv(path)
-    fuel_comp = trip['Fuel Rate [L/km]']
+    fuel_comp = trip['Fuel Rate [km/L]']
     distance = trip['Distance[km]']
     
     pke = aggressiveness(trip)
     total_d = np.sum(distance)
-    total_fuel = np.sum(distance * fuel_comp)
+    total_fuel = np.sum(distance / fuel_comp)
     
     raw_trip_ids = trip['Trip'].unique()
     assert(len(raw_trip_ids) == 1)

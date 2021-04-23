@@ -11,8 +11,8 @@ from utils import group_into_trips, group_by_engine_type
 
 raw_data_path = '/nfs/turbo/midas-applied-ds/Data/Raw/VED/'
 processed_data_path = '/nfs/turbo/midas-applied-ds/Data/Processed'
-ICE_HEV = pd.read_csv('../VED_Static_Data_ICE_HEV.csv')
-PHEV_BEV = pd.read_csv('../VED_Static_Data_PHEV_EV.csv')
+ICE_HEV = pd.read_csv('VED_Static_Data_ICE_HEV.csv')
+PHEV_BEV = pd.read_csv('VED_Static_Data_PHEV_EV.csv')
 static = pd.concat([ICE_HEV, PHEV_BEV])
 
 paths = glob.glob(os.path.join(raw_data_path, '*.csv'))
@@ -46,11 +46,11 @@ def write_trips(path, w, x, y, z):
   for trip in ICE_trips:
     write_trip(trip, 'ICE', w)
     w += 1
-
+  '''
   for trip in HEV_trips:
     write_trip(trip, 'HEV', x)
     x += 1
-  '''
+  
   for i, trip in enumerate(PHEV_trips):
     print(f'PHEV trip {i}')
     write_trip(trip, 'PHEV', y)
