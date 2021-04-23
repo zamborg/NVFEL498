@@ -5,8 +5,8 @@ import re
 def group_by_engine_type(static_df, timeseries_df, ignore_diesel=True, ignore_turbocharged=True):
     ICEs = static_df[static_df['Vehicle Type'] == 'ICE']
     HEVs = static_df[static_df['Vehicle Type'] == 'HEV']
-    PHEVs = static_df[static_df['Vehicle Type'] == 'PHEV']
-    BEVs = static_df[static_df['Vehicle Type'] == 'BEV']
+    PHEVs = static_df[static_df['EngineType'] == 'PHEV']
+    BEVs = static_df[static_df['EngineType'] == 'BEV']
 
     if ignore_diesel:
         ICEs = ICEs[~ICEs['Engine Configuration & Displacement'].str.contains('DSL')]
