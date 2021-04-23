@@ -272,6 +272,9 @@ def fuel_algo(x, displacement):
     displacement = float(displacement[0].strip("L"))
     maf = 1.84 * displacement * absLoad/100 * RPM/2/60
     fuel_flow[~maf_screen] = list((maf*sec_hour)/(air_to_fuel*fuel_density)) #update out where MAF is NAN
+    print(out.shape)
+    tmp = ~maf_screen
+    print(tmp.shape)
     out[~maf_screen] = list(1/(fuel_flow/x[~maf_screen]['Vehicle Speed[km/h]']))
 
     out.replace(float('inf'), 0, inplace=True)
