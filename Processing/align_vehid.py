@@ -1,14 +1,14 @@
 import pandas as pd
 import numpy as np
 
-trip_data_path = 'all_PHEV_trips.csv'
-static_data_path = 'VED_Static_Data_PHEV_EV.csv'
-temp_data_path = 'all_PHEV_trips.csv'
+trip_data_path = 'all_HEV_trips.csv'
+static_data_path = 'VED_Static_Data_ICE_HEV.csv'
+temp_data_path = 'all_HEV_trips.csv'
 
 
 static_df = pd.read_csv(static_data_path)
 trips = pd.read_csv(trip_data_path)
-ICEs = static_df[static_df['EngineType'] == 'PHEV']
+ICEs = static_df[static_df['Vehicle Type'] == 'HEV']
 
 weights = []
 displacements = []
