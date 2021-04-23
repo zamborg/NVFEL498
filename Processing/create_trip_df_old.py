@@ -4,7 +4,8 @@ from utils import aggressivity, aggressiveness
 import pandas as pd
 import numpy as np
 
-paths = os.listdir('/nfs/turbo/midas-applied-ds/Data/Processed/HEV_trips/')
+HEV_trip_path = '/nfs/turbo/midas-applied-ds/Data/Processed/HEV_trips/'
+paths = os.listdir(HEV_trip_path)
 alltrips_path = ('/nfs/turbo/midas-applied-ds/Project/NVFEL498/all_HEV_trips.csv')
 
 num_trips = 17737
@@ -25,6 +26,7 @@ def nacheck(x):
   return pd.isna(x) or np.isinf(x) or x == 0
 
 for i, path in enumerate(paths):
+  path = os.path.join(HEV_trip_path, path)
   if i % 1000 == 0:
     print(i)
   #path = os.path.join(processed_data_path, 'ICE_trips', f'ICE_trip{i}.csv')
