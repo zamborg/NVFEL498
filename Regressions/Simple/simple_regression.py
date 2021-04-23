@@ -3,12 +3,12 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-df = pd.read_csv('../../alltrips.csv')
+df = pd.read_csv('../../all_ICE_trips.csv')
 print(df)
 
 
 pke = df['Aggressiveness']
-pf = df['Aggressivity']
+pf = df['Aggressiveness']
 fuel = df['Fuel Rate[gpm]']
 
 idx = pke.isna() | pf.isna() | fuel.isna() | np.isinf(pke) | np.isinf(pf) | np.isinf(fuel)
@@ -89,4 +89,4 @@ plt.xlabel('PF Aggressiveness Score (unitless)')
 plt.ylabel('Fuel Rate[gpm]')
 plt.title('Preliminary Regression on PF Aggressiveness Score')
 
-plt.savefig('pf_simplereg.png')
+#plt.savefig('pf_simplereg.png')
