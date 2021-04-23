@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-df = pd.read_csv('../../all_PHEV_trips.csv')
+df = pd.read_csv('../../all_HEV_trips.csv')
 print(df)
 
 
@@ -14,9 +14,6 @@ fuel = df['Fuel Rate[gpm]']
 idx = pke.isna() | pf.isna() | fuel.isna() | np.isinf(pke) | np.isinf(pf) | np.isinf(fuel)
 
 print(np.sum(idx))
-
-print(idx.iloc[4046])
-print(fuel.isna().iloc[4046])
 
 pke = pke[~idx]
 pf = pf[~idx]
