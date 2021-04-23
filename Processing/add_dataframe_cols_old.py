@@ -35,7 +35,7 @@ for i, path in enumerate(paths):
   if i % 1000 == 0:
     print(f'{i} of {len(paths)}')
   try: 
-    append_fuel_info(path)
+    append_dist_info(path)
   except Exception as e:
     print(f'error opening {path}')
     print(e)
@@ -47,7 +47,7 @@ for i, path in enumerate(paths):
   if i % 1000 == 0:
     print(f'{i} of {len(paths)}')
   try: 
-    append_fuel_info(path)
+    append_dist_info(path)
   except Exception as e:
     print(f'error opening {path}')
     print(e)

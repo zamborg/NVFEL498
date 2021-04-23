@@ -81,9 +81,11 @@ def get_distances2(trip):
 
 def get_distances(trip):
     t = np.array(trip['Timestamp(ms)'])
-   
-    helpme = t[1:] - t[:-1]
     delta_t = np.append(np.array([0]), t[1:] - t[:-1]) / 1000 / 3600
+    print(delta_t[:10])
+    print(trip['Vehicle Speed[km/h]'])
+    print('honky')
+    print(delta_t * trip['Vehicle Speed[km/h]'])
     return delta_t * trip['Vehicle Speed[km/h]']
 
 
