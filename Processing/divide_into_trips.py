@@ -37,6 +37,7 @@ def write_trip(trip, prefix, i):
 def write_trips(path, w, x, y, z):
   df = pd.read_csv(path)
   ICEs, HEVs, PHEVs, BEVs = group_by_engine_type(static, df)
+  print(len(PHEV))
   ICE_trips = group_into_trips(ICEs)
   HEV_trips = group_into_trips(HEVs)
   PHEV_trips = group_into_trips(PHEVs)
