@@ -8,7 +8,7 @@ temp_data_path = 'all_PHEV_trips.csv'
 
 static_df = pd.read_csv(static_data_path)
 trips = pd.read_csv(trip_data_path)
-PHEVs = static_df[static_df['Vehicle Type'] == 'PHEV']
+PHEVs = static_df[static_df['EngineType'] == 'PHEV']
 
 weights = []
 displacements = []
