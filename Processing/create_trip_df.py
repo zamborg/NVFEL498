@@ -1,11 +1,11 @@
 import glob
 import os
-from utils import aggressivity, aggressiveness
+from utils import aggressivity, aggressiveness, get_distances, get_fuel
 import pandas as pd
 import numpy as np
 
-paths = os.listdir('/nfs/turbo/midas-applied-ds/Data/Processed/PHEV_trips/')
-alltrips_path = ('/nfs/turbo/midas-applied-ds/Project/NVFEL498/all_PHEV_trips.csv')
+paths = os.listdir('/nfs/turbo/midas-applied-ds/Data/Processed/ICE_trips/')
+alltrips_path = ('/nfs/turbo/midas-applied-ds/Project/NVFEL498/all_ICE_trips.csv')
 
 l = []
 
@@ -19,7 +19,7 @@ d = {
   'Fuel Rate[gpm]' : [],
 }
 
-nonEVs = pd.read_csv('/nfs/turbo/midas-applied-ds/Project/NVFEL498/VED_Static_Data_PHEV_EV.csv')
+nonEVs = pd.read_csv('/nfs/turbo/midas-applied-ds/Project/NVFEL498/VED_Static_Data_ICE_HEV.csv')
 
 def nacheck(x):
   return pd.isna(x) or np.isinf(x) or x == 0
@@ -27,7 +27,7 @@ def nacheck(x):
 for i, path in enumerate(paths):
   if i % 1000 == 0:
     print(i)
-  path = os.path.join('/nfs/turbo/midas-applied-ds/Data/Processed/PHEV_trips/', path)
+  path = os.path.join('/nfs/turbo/midas-applied-ds/Data/Processed/ICE_trips/', path)
   try:
     trip = pd.read_csv(path)
     distance = get_distances(trip)
