@@ -16,6 +16,7 @@ PHEV_BEV = pd.read_csv('../VED_Static_Data_PHEV_EV.csv')
 static = pd.concat([ICE_HEV, PHEV_BEV])
 
 paths = glob.glob(os.path.join(raw_data_path, '*.csv'))
+paths = [os.path.join(raw_data_path, 'VED_171101_week.csv')]
 
 entries = set()
 w = 0
@@ -37,11 +38,11 @@ def write_trip(trip, prefix, i):
 def write_trips(path, w, x, y, z):
   df = pd.read_csv(path)
   ICEs, HEVs, PHEVs, BEVs = group_by_engine_type(static, df)
-  print(len(PHEV))
   ICE_trips = group_into_trips(ICEs)
   HEV_trips = group_into_trips(HEVs)
   PHEV_trips = group_into_trips(PHEVs)
   BEV_trips = group_into_trips(BEVs)
+  print(len(PHEVs))
   '''
   for trip in ICE_trips:
     write_trip(trip, 'ICE', w)

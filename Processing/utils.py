@@ -80,7 +80,9 @@ def get_distances2(trip):
     return trip.apply(lambda df : f(df['Vehicle Speed[km/h]'], df['Timestamp(ms)']), axis=1)
 
 def get_distances(trip):
-    t = trip['Timestamp(ms)']
+    t = np.array(trip['Timestamp(ms)'])
+   
+    helpme = t[1:] - t[:-1]
     delta_t = np.append(np.array([0]), t[1:] - t[:-1]) / 1000 / 3600
     return delta_t * trip['Vehicle Speed[km/h]']
 
@@ -133,11 +135,12 @@ def get_accel2(trip):
 
 def get_accel(trip):
     unit_conversion = 621.371 # from kph / ms to mph / s
-    t = trip['Timestamp(ms)']
-    v = trip['Vehicle Speed[km/h]']
+    t = np.array(trip['Timestamp(ms)'])
+    v = np.array(trip['Vehicle Speed[km/h]'])
     delta_t = np.append(np.array([0]), t[1:] - t[:-1])
     delta_v = np.append(np.array([0]), v[1:] - v[:-1])
-    return delta_v / delta_t * unit_conversion
+    out = np.append(np.array([0]), delta_v[1:] / delta_t[1:]) * unit_conversion
+    return out
 
 def get_power_factors(trip):
     '''
