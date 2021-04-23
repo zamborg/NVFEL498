@@ -174,7 +174,8 @@ def pke(d, v, a):
 
     if begin_accel is not None and begin_accel < len(a) - 1:
         pke_segment = (v[len(a) - 1] ** 2 - v[begin_accel] ** 2) / np.sum(d[begin_accel : len(a) - 1])
-        total += pke_segment
+        if not np.isinf(pke_segment) and not np.isnan(pke_segment):
+            total += pke_segment
     
     return total
 
