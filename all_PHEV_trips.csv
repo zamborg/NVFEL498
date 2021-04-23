@@ -1,2 +1,2 @@
-,TripId,TripId_raw,VehId,Aggressiveness,Distance[km],Fuel Consumed[L],Fuel Rate[gpm]
-0,2997,1528,449,4270.929743374001,-2.3968677492421877e-08,-6.364492210912072e-06,265.53372470902156
+,Unnamed: 0,TripId,TripId_raw,VehId,Aggressiveness,Distance[km],Fuel Consumed[L],Fuel Rate[gpm],Weight,Displacement
+0,0,2997,1528,449,4270.929743374001,-2.396867749242188e-08,-6.364492210912072e-06,265.5337247090216,4000,2.0
