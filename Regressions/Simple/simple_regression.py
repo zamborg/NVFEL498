@@ -3,7 +3,7 @@ import pandas as pd
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-df = pd.read_csv('../../all_ICE_trips.csv')
+df = pd.read_csv('../../all_PHEV_trips.csv')
 print(df)
 
 
