@@ -166,17 +166,17 @@ def pke(d, v, a):
             end_accel = i - 1
             if begin_accel is not None:
                 
-                pke_segment = v[end_accel] ** 2 - v[begin_accel] ** 2
+                pke_segment = (v[end_accel] ** 2 - v[begin_accel] ** 2) / np.sum(d[begin_accel : end_accel + 1])
                 assert(pke_segment > 0)
 
                 total += pke_segment
                 begin_accel = None
 
     if begin_accel is not None and begin_accel < len(a) - 1:
-        pke_segment = v[len(a) - 1] ** 2 - v[begin_accel] ** 2
+        pke_segment = (v[len(a) - 1] ** 2 - v[begin_accel] ** 2) / np.sum(d[begin_accel : len(a) - 1])
         total += pke_segment
     
-    return total / np.sum(d)
+    return total
 
 def normalized_pke1(d, v, a):
     begin_accel = None
