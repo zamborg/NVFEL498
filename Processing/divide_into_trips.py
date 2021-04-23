@@ -41,6 +41,7 @@ def write_trips(path, w, x, y, z):
   HEV_trips = group_into_trips(HEVs)
   PHEV_trips = group_into_trips(PHEVs)
   BEV_trips = group_into_trips(BEVs)
+  '''
   for trip in ICE_trips:
     write_trip(trip, 'ICE', w)
     w += 1
@@ -48,8 +49,9 @@ def write_trips(path, w, x, y, z):
   for trip in HEV_trips:
     write_trip(trip, 'HEV', x)
     x += 1
-
-  for trip in PHEV_trips:
+  '''
+  for i, trip in enumerate(PHEV_trips):
+    print(f'PHEV trip {i}')
     write_trip(trip, 'PHEV', y)
     y += 1
 
